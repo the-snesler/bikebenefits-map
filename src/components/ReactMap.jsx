@@ -19,6 +19,19 @@ export default function ReactMap({
 }) {
   const mapRef = useRef(null)
   const [route, setRoute] = useState(null)
+  const hasZoomedToUser = useRef(false)
+
+  // Zoom to user location when available
+  useEffect(() => {
+    if (userLocation && !hasZoomedToUser.current) {
+      mapRef.current?.flyTo({
+        center: [userLocation.longitude, userLocation.latitude],
+        zoom: 14,
+        duration: 1500
+      })
+      hasZoomedToUser.current = true
+    }
+  }, [userLocation])
 
   // Fetch bike route when a business is selected
   useEffect(() => {
@@ -81,9 +94,9 @@ export default function ReactMap({
       ref={mapRef}
       mapboxAccessToken={mapboxToken}
       initialViewState={{
-        latitude: userLocation?.latitude || MADISON_CENTER.latitude,
-        longitude: userLocation?.longitude || MADISON_CENTER.longitude,
-        zoom: 13
+        latitude: MADISON_CENTER.latitude,
+        longitude: MADISON_CENTER.longitude,
+        zoom: 11
       }}
       style={{ width: '100%', height: '100%' }}
       mapStyle="mapbox://styles/mapbox/dark-v11"
