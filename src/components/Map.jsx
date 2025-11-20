@@ -13,6 +13,19 @@ const MADISON_CENTER = {
   longitude: -89.383761
 }
 
+function useMapImage({ mapRef, url, name }) {
+  useEffect(() => {
+    if (mapRef.current) {
+      const map = mapRef.current.getMap();
+
+      map.loadImage(url, (error, image) => {
+        if (error) throw error;
+        if (!map.hasImage(name)) map.addImage(name, image);
+      });
+    }
+  }, [mapRef.current]);
+}
+
 export default function Map({
   userLocation,
   businesses,
@@ -31,41 +44,16 @@ export default function Map({
 
     return {
       ...businessesGeoJSON,
-      features: businessesGeoJSON.features.map(feature => ({
+      features: businessesGeoJSON.features.map((feature) => ({
         ...feature,
         properties: {
           ...feature.properties,
-          isSelected: selectedBusiness?.id === feature.properties.id
-        }
-      }))
+          isSelected: selectedBusiness?.id === feature.properties.id,
+        },
+      })),
     };
   }, [businessesGeoJSON, selectedBusiness]);
-
-  // Load bike icon when map loads
-  useEffect(() => {
-    const map = mapRef.current?.getMap();
-    if (!map) return;
-
-    const loadIcon = () => {
-      if (map.hasImage('bike-icon')) return;
-
-      map.loadImage('/bike-icon.png', (error, image) => {
-        if (error) {
-          console.error('Error loading bike icon:', error);
-          return;
-        }
-        if (!map.hasImage('bike-icon')) {
-          map.addImage('bike-icon', image);
-        }
-      });
-    };
-
-    if (map.isStyleLoaded()) {
-      loadIcon();
-    } else {
-      map.on('style.load', loadIcon);
-    }
-  }, []);
+  useMapImage({ mapRef, url: "/bike-icon.png", name: "bike-icon" });
 
   // Zoom to user location when available
   useEffect(() => {
@@ -126,23 +114,26 @@ export default function Map({
   }, []);
 
   // Handle click on business marker
-  const handleMapClick = useCallback((event) => {
-    const features = event.features;
-    if (!features || features.length === 0) return;
+  const handleMapClick = useCallback(
+    (event) => {
+      const features = event.features;
+      if (!features || features.length === 0) return;
 
-    const clickedFeature = features[0];
-    const businessId = clickedFeature.properties.id;
+      const clickedFeature = features[0];
+      const businessId = clickedFeature.properties.id;
 
-    // Find the business in the array
-    const business = businesses.find(b => b.id === businessId);
-    if (business) {
-      onBusinessSelect(business);
-      flyToLocation(
-        parseFloat(business.latitude),
-        parseFloat(business.longitude)
-      );
-    }
-  }, [businesses, onBusinessSelect, flyToLocation]);
+      // Find the business in the array
+      const business = businesses.find((b) => b.id === businessId);
+      if (business) {
+        onBusinessSelect(business);
+        flyToLocation(
+          parseFloat(business.latitude),
+          parseFloat(business.longitude)
+        );
+      }
+    },
+    [businesses, onBusinessSelect, flyToLocation]
+  );
 
   // Route line style
   const routeLayer = {
@@ -161,7 +152,7 @@ export default function Map({
     type: "symbol",
     layout: {
       "icon-image": "bike-icon",
-      "icon-size": ["case", ["get", "isSelected"], 1.3, 1.0],
+      "icon-size": ["case", ["get", "isSelected"], 0.9, 0.6],
       "icon-anchor": "bottom",
       "icon-allow-overlap": true,
       "icon-ignore-placement": true,
@@ -179,7 +170,7 @@ export default function Map({
       }}
       style={{ width: "100%", height: "100%" }}
       mapStyle="mapbox://styles/mapbox/dark-v11"
-      interactiveLayerIds={['businesses']}
+      interactiveLayerIds={["businesses"]}
       onClick={handleMapClick}
     >
       <NavigationControl position="top-right" />

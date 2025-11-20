@@ -1,88 +1,38 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from "react";
+import { Sheet } from "react-modal-sheet";
 
-const SHEET_POSITIONS = {
-  COLLAPSED: 200,
-  HALF: window.innerHeight * 0.5,
-  EXPANDED: window.innerHeight * 0.85
-}
+// Snap points: 200px collapsed, 50% half-open, 85% expanded
+const snapPoints = [0, 200, 0.5, 0.85, 1];
+const initialSnap = 1; // Start at collapsed (200px)
 
 export default function BottomSheet({ children }) {
-  const [height, setHeight] = useState(SHEET_POSITIONS.COLLAPSED)
-  const [isDragging, setIsDragging] = useState(false)
-  const startY = useRef(0)
-  const startHeight = useRef(0)
-
-  const handleDragStart = (e) => {
-    setIsDragging(true)
-    startY.current = e.touches ? e.touches[0].clientY : e.clientY
-    startHeight.current = height
-  }
-
-  const handleDrag = (e) => {
-    if (!isDragging) return
-
-    const currentY = e.touches ? e.touches[0].clientY : e.clientY
-    const delta = startY.current - currentY
-    const newHeight = Math.max(
-      SHEET_POSITIONS.COLLAPSED,
-      Math.min(SHEET_POSITIONS.EXPANDED, startHeight.current + delta)
-    )
-
-    setHeight(newHeight)
-  }
-
-  const handleDragEnd = () => {
-    setIsDragging(false)
-
-    // Snap to nearest position
-    const positions = Object.values(SHEET_POSITIONS)
-    const nearest = positions.reduce((prev, curr) =>
-      Math.abs(curr - height) < Math.abs(prev - height) ? curr : prev
-    )
-
-    setHeight(nearest)
-  }
-
-  useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('mousemove', handleDrag)
-      window.addEventListener('mouseup', handleDragEnd)
-      window.addEventListener('touchmove', handleDrag)
-      window.addEventListener('touchend', handleDragEnd)
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', handleDrag)
-      window.removeEventListener('mouseup', handleDragEnd)
-      window.removeEventListener('touchmove', handleDrag)
-      window.removeEventListener('touchend', handleDragEnd)
-    }
-  }, [isDragging, height])
+  const [isOpen, setOpen] = useState(true);
+  const [snapPoint, setSnapPoint] = useState(initialSnap);
 
   return (
-    <div
-      className={`
-        fixed bottom-0 left-0 right-0
-        bg-surface-900 rounded-t-3xl shadow-2xl
-        border-t border-surface-700
-        transition-height duration-300 ease-out
-        ${isDragging ? '' : 'transition-all'}
-      `}
-      style={{ height: `${height}px` }}
+    <Sheet
+      isOpen={isOpen}
+      snapPoints={snapPoints}
+      initialSnap={initialSnap}
+      disableDismiss
+      onClose={() => setOpen(false)}
+      onSnap={setSnapPoint}
     >
-      {/* Drag handle */}
-      <div
-        className="flex justify-center py-2 cursor-grab active:cursor-grabbing"
-        onMouseDown={handleDragStart}
-        onTouchStart={handleDragStart}
-      >
-        <div className="w-12 h-1.5 bg-surface-600 rounded-full" />
-      </div>
+      <Sheet.Container className="!bg-surface-900/80 backdrop-blur-lg !rounded-t-3xl !border-t !border-surface-600">
+        <Sheet.Header className="flex justify-center py-2">
+          {/* Drag handle */}
+          <div className="w-12 h-1.5 bg-surface-600 rounded-full" />
+        </Sheet.Header>
 
-      {/* Content */}
-      <div className="h-full overflow-y-auto px-2 pb-10">
-        {children}
-      </div>
-    </div>
-  )
+        <Sheet.Content
+          disableScroll={(state) => state.currentSnap < snapPoints.length - 3}
+          className="pb-10"
+        >
+          <div className="px-3">{children}</div>
+        </Sheet.Content>
+      </Sheet.Container>
+
+      <Sheet.Backdrop />
+    </Sheet>
+  );
 }
