@@ -86,6 +86,12 @@ export default function Map({
       return;
     }
 
+    // Don't show route for businesses more than 10 miles away
+    if (selectedBusiness.distance !== null && selectedBusiness.distance > 10) {
+      setRoute(null);
+      return;
+    }
+
     const fetchRoute = async () => {
       try {
         const start = `${userLocation.longitude},${userLocation.latitude}`;
