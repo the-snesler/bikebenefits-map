@@ -2,7 +2,6 @@ import { useState } from 'react'
 import Map from './components/ReactMap'
 import BottomSheet from './components/BottomSheet'
 import BusinessList from './components/BusinessList'
-import ChatBot from './components/ChatBot'
 import { useGeolocation } from './hooks/useGeolocation'
 import { useBusinesses } from './hooks/useBusinesses'
 
@@ -62,9 +61,6 @@ function App() {
           error={businessesError}
         />
       </BottomSheet>
-
-      {/* AI Chat Assistant */}
-      <ChatBot businesses={businesses} />
     </div>
   )
 }

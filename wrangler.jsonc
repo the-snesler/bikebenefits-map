@@ -6,11 +6,9 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "restless-dawn-168d",
 	"compatibility_date": "2025-11-20",
-	"main": "src/worker.js",
 	"assets": {
 		// The path to the directory containing the `index.html` file to be served at `/`
-		"directory": "./dist",
-		"binding": "ASSETS"
+		"directory": "./dist"
 	},
 	"observability": {
 		"enabled": true
