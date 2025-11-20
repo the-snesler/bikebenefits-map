@@ -13,11 +13,25 @@ export default function BusinessList({
 }) {
   const cardRefs = useRef({})
 
-  // Filter businesses by category
+  // Filter businesses by category and distance
   const filteredBusinesses = useMemo(() => {
-    if (!selectedCategory) return businesses
-    return businesses.filter(b => b.category?.id === selectedCategory)
-  }, [businesses, selectedCategory])
+    let filtered = businesses
+
+    // Filter by distance (within 10 miles, or selected business)
+    filtered = filtered.filter(b => {
+      // Always include selected business
+      if (selectedBusiness && b.id === selectedBusiness.id) return true
+      // Include if within 10 miles (or no distance calculated yet)
+      return b.distance === null || b.distance <= 10
+    })
+
+    // Filter by category if selected
+    if (selectedCategory) {
+      filtered = filtered.filter(b => b.category?.id === selectedCategory)
+    }
+
+    return filtered
+  }, [businesses, selectedCategory, selectedBusiness])
 
   // Scroll to selected business when it changes
   useEffect(() => {

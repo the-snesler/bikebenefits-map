@@ -1,6 +1,7 @@
+import { memo } from 'react'
 import { formatBikeTime } from '../utils/distance'
 
-export default function BusinessCard({ business, isSelected, onClick }) {
+function BusinessCard({ business, isSelected, onClick }) {
   return (
     <button
       onClick={onClick}
@@ -70,3 +71,5 @@ export default function BusinessCard({ business, isSelected, onClick }) {
     </button>
   )
 }
+
+export default memo(BusinessCard)
