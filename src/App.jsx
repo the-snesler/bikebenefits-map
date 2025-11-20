@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import Map from './components/ReactMap'
+import Map from "./components/Map";
 import BottomSheet from './components/BottomSheet'
 import BusinessList from './components/BusinessList'
 import { useGeolocation } from './hooks/useGeolocation'
@@ -11,7 +11,7 @@ function App() {
   const [selectedBusiness, setSelectedBusiness] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
   const { location: userLocation, error: locationError, loading: locationLoading } = useGeolocation()
-  const { businesses, loading: businessesLoading, error: businessesError } = useBusinesses(userLocation)
+  const { businesses, businessesGeoJSON, loading: businessesLoading, error: businessesError } = useBusinesses(userLocation)
 
   if (!MAPBOX_TOKEN) {
     return (
@@ -44,6 +44,7 @@ function App() {
       <Map
         userLocation={userLocation}
         businesses={businesses}
+        businessesGeoJSON={businessesGeoJSON}
         selectedBusiness={selectedBusiness}
         onBusinessSelect={setSelectedBusiness}
         mapboxToken={MAPBOX_TOKEN}

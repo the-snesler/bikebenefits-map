@@ -65,5 +65,34 @@ export function useBusinesses(userLocation) {
       })
   }, [businesses, userLocation])
 
-  return { businesses: sortedBusinesses, loading, error }
+  // Convert to GeoJSON for map rendering
+  const businessesGeoJSON = useMemo(() => {
+    if (!sortedBusinesses.length) {
+      return {
+        type: 'FeatureCollection',
+        features: []
+      }
+    }
+
+    return {
+      type: 'FeatureCollection',
+      features: sortedBusinesses
+        .filter(b => b.latitude && b.longitude)
+        .map(business => ({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [parseFloat(business.longitude), parseFloat(business.latitude)]
+          },
+          properties: {
+            id: business.id,
+            name: business.name,
+            distance: business.distance,
+            isSelected: false // Will be updated by map component
+          }
+        }))
+    }
+  }, [sortedBusinesses])
+
+  return { businesses: sortedBusinesses, businessesGeoJSON, loading, error }
 }
