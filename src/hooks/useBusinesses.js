@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { calculateDistance } from '../utils/distance'
 
-const API_URL = 'https://bicyclebenefits.org/members?categories=&city_id=6&member=&range=10&stickers=0&pumps=0'
+const API_URL = "https://bicyclebenefits.org/members";
 
 export function useBusinesses(userLocation) {
   const [businesses, setBusinesses] = useState([])

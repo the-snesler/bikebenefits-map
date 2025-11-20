@@ -35,7 +35,7 @@ function App() {
       {locationError && (
         <div className="absolute top-0 left-0 right-0 z-10 bg-surface-800 border-b border-surface-700 px-5 py-3">
           <p className="text-sm text-gray-300">
-            {locationError}. Showing default Madison location.
+            {locationError}. Showing default location.
           </p>
         </div>
       )}

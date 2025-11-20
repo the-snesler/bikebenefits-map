@@ -1,7 +1,7 @@
 {
-  "name": "Bicycle Benefits Madison",
+  "name": "Bicycle Benefits",
   "short_name": "Bike Benefits",
-  "description": "Find bicycle-friendly businesses with discounts in Madison, WI",
+  "description": "Find bicycle-friendly businesses with discounts",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",

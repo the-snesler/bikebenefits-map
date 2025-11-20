@@ -1,6 +1,6 @@
-# Bicycle Benefits Madison
+# Bicycle Benefits
 
-A mobile-first PWA for finding bicycle-friendly businesses in Madison, WI that offer discounts to cyclists. Built in an hour for a hackathon, lol. Find it at https://bb.samnesler.com
+A mobile-first PWA for finding bicycle-friendly businesses that offer discounts to cyclists. Built in an hour for a hackathon, lol. Find it at https://bb.samnesler.com
 
 <img width="645" height="1398" alt="image" src="https://github.com/user-attachments/assets/46c05a6b-3c18-4b58-9cfa-9397e11dc98a" />
 
@@ -23,9 +23,7 @@ A mobile-first PWA for finding bicycle-friendly businesses in Madison, WI that o
 
 ## Future work
 
-- there's no reason it couldn't be expanded beyond Madison except that we didn't have time
 - better icons
-- probably remove the AI chatbot
 
 ## Setup
 
@@ -60,10 +58,3 @@ A mobile-first PWA for finding bicycle-friendly businesses in Madison, WI that o
    ```bash
    pnpm wrangler deploy
    ```
-
-## API
-
-Uses the Bicycle Benefits API to fetch participating businesses in Madison:
-```
-https://bicyclebenefits.org/members?city_id=6
-```
