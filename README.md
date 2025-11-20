@@ -11,7 +11,6 @@ A mobile-first PWA for finding bicycle-friendly businesses that offer discounts 
 - **Bike Routing** - Red cycling route from your location to selected businesses
 - **Category Filtering** - Filter businesses by type (restaurants, shops, etc.)
 - **Bike Time Estimates** - Shows estimated cycling time to each business
-- **AI Assistant** - Claude-powered chatbot to help find businesses
 - **PWA Support** - Add to home screen for app-like experience
 
 ## Tech Stack
@@ -19,11 +18,6 @@ A mobile-first PWA for finding bicycle-friendly businesses that offer discounts 
 - **Frontend**: React 18, Vite, Tailwind CSS v4
 - **Maps**: Mapbox GL JS, react-map-gl
 - **Backend**: Cloudflare Workers
-- **AI**: Claude API (Haiku)
-
-## Future work
-
-- better icons
 
 ## Setup
 
