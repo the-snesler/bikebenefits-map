@@ -113,6 +113,16 @@ export default function Map({
     });
   }, []);
 
+  const handleRecenter = useCallback(() => {
+    if (userLocation) {
+      mapRef.current?.flyTo({
+        center: [userLocation.longitude, userLocation.latitude],
+        zoom: 14,
+        duration: 1000,
+      });
+    }
+  }, [userLocation]);
+
   // Handle click on business marker
   const handleMapClick = useCallback(
     (event) => {
@@ -174,6 +184,30 @@ export default function Map({
       onClick={handleMapClick}
     >
       <NavigationControl position="top-right" />
+
+      {/* Recenter button */}
+      {userLocation && (
+        <button
+          onClick={handleRecenter}
+          className="absolute top-[120px] right-[10px] w-[29px] h-[29px] bg-white rounded flex items-center justify-center shadow cursor-pointer hover:bg-gray-100"
+          title="Center on my location"
+          aria-label="Center on my location"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="w-4 h-4 text-gray-700"
+          >
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
+          </svg>
+        </button>
+      )}
 
       {/* Bike route */}
       {route && (

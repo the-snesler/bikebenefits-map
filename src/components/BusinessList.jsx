@@ -9,7 +9,8 @@ export default function BusinessList({
   selectedCategory,
   onCategoryChange,
   loading,
-  error
+  error,
+  onShowInfo
 }) {
   const cardRefs = useRef({})
 
@@ -71,12 +72,20 @@ export default function BusinessList({
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-white mb-4">
-        Nearby Businesses
-        <span className="ml-2 text-sm font-normal text-gray-400">
-          ({filteredBusinesses.length})
-        </span>
-      </h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold text-white">
+          Nearby Businesses
+          <span className="ml-2 text-sm font-normal text-gray-400">
+            ({filteredBusinesses.length})
+          </span>
+        </h2>
+        <button
+          onClick={onShowInfo}
+          className="text-sm text-primary-400 hover:text-primary-300 transition-colors"
+        >
+          What is this?
+        </button>
+      </div>
 
       <CategoryFilter
         businesses={businesses}

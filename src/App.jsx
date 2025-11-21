@@ -10,14 +10,26 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 function App() {
   const [selectedBusiness, setSelectedBusiness] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
-  const { location: userLocation, error: locationError, loading: locationLoading } = useGeolocation()
-  const { businesses, businessesGeoJSON, loading: businessesLoading, error: businessesError } = useBusinesses(userLocation)
+  const [showInfo, setShowInfo] = useState(false);
+  const {
+    location: userLocation,
+    error: locationError,
+    loading: locationLoading,
+  } = useGeolocation();
+  const {
+    businesses,
+    businessesGeoJSON,
+    loading: businessesLoading,
+    error: businessesError,
+  } = useBusinesses(userLocation);
 
   if (!MAPBOX_TOKEN) {
     return (
       <div className="h-full flex items-center justify-center bg-surface-950 p-6">
         <div className="bg-surface-900 rounded-xl shadow-lg p-8 max-w-md text-center border border-surface-700">
-          <h1 className="text-xl font-bold text-primary-500 mb-3">Missing Mapbox Token</h1>
+          <h1 className="text-xl font-bold text-primary-500 mb-3">
+            Missing Mapbox Token
+          </h1>
           <p className="text-gray-300 mb-5">
             Please add your Mapbox access token to the environment variables.
           </p>
@@ -26,7 +38,7 @@ function App() {
           </code>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -60,10 +72,42 @@ function App() {
           onCategoryChange={setSelectedCategory}
           loading={businessesLoading}
           error={businessesError}
+          onShowInfo={() => setShowInfo(true)}
         />
       </BottomSheet>
+
+      {/* Info Modal */}
+      {showInfo && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+          onClick={() => setShowInfo(false)}
+        >
+          <div
+            className="bg-surface-900 rounded-xl shadow-xl max-w-sm w-full p-6 border border-surface-700"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-bold text-white mb-4">
+              What is Bike Benefits?
+            </h2>
+            <p className="text-gray-300 mb-4">
+              Discounts for riding your bike at businesses throughout the U.S.
+            </p>
+            <p className="text-gray-400 text-sm mb-6">
+              To participate, get a Bike Benefits sticker for your helmet from
+              any participating business. Then show your stickered helmet when
+              you ride to get discounts!
+            </p>
+            <button
+              onClick={() => setShowInfo(false)}
+              className="w-full py-2.5 bg-primary-600 hover:bg-primary-500 text-white font-medium rounded-lg transition-colors"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
 export default App

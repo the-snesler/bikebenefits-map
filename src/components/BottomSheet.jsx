@@ -17,6 +17,7 @@ export default function BottomSheet({ children }) {
       disableDismiss
       onClose={() => setOpen(false)}
       onSnap={setSnapPoint}
+      className="z-10!"
     >
       <Sheet.Container className="!bg-surface-900/80 backdrop-blur-lg !rounded-t-3xl !border-t !border-surface-600">
         <Sheet.Header className="flex justify-center py-2">
