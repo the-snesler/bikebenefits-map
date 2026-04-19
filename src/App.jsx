@@ -1,15 +1,16 @@
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from "react";
 import Map from "./components/Map";
-import BottomSheet from './components/BottomSheet'
-import BusinessList from './components/BusinessList'
-import { useGeolocation } from './hooks/useGeolocation'
-import { useBusinesses } from './hooks/useBusinesses'
+import BottomSheet from "./components/BottomSheet";
+import BusinessList from "./components/BusinessList";
+import { useGeolocation } from "./hooks/useGeolocation";
+import { useBusinesses } from "./hooks/useBusinesses";
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 function App() {
-  const [selectedBusiness, setSelectedBusiness] = useState(null)
-  const [selectedCategory, setSelectedCategory] = useState(null)
+  const [selectedBusiness, setSelectedBusiness] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [showInfo, setShowInfo] = useState(false);
   const {
     location: userLocation,
@@ -18,10 +19,50 @@ function App() {
   } = useGeolocation();
   const {
     businesses,
-    businessesGeoJSON,
     loading: businessesLoading,
     error: businessesError,
   } = useBusinesses(userLocation);
+
+  const trimmedSearchQuery = searchQuery.trim();
+
+  const filteredBusinesses = useMemo(() => {
+    let filtered = businesses;
+
+    if (selectedCategory) {
+      filtered = filtered.filter((b) => b.category?.id === selectedCategory);
+    }
+
+    // Keep existing "nearby" behavior when not searching.
+    if (!trimmedSearchQuery) {
+      return filtered.filter((b) => {
+        if (selectedBusiness && b.id === selectedBusiness.id) return true;
+        return b.distance === null || b.distance <= 10;
+      });
+    }
+
+    const q = trimmedSearchQuery.toLowerCase();
+
+    // Search across all businesses (not just nearby), preserving distance order.
+    return filtered.filter(
+      (b) =>
+        b.name?.toLowerCase().includes(q) ||
+        b.address?.toLowerCase().includes(q) ||
+        b.category?.name?.toLowerCase().includes(q) ||
+        b.discount?.toLowerCase().includes(q),
+    );
+  }, [businesses, selectedCategory, selectedBusiness, trimmedSearchQuery]);
+
+  // If a search/category filter hides the selected business, clear selection + route.
+  useEffect(() => {
+    if (!selectedBusiness) return;
+
+    const stillVisible = filteredBusinesses.some(
+      (b) => b.id === selectedBusiness.id,
+    );
+    if (!stillVisible) {
+      setSelectedBusiness(null);
+    }
+  }, [filteredBusinesses, selectedBusiness]);
 
   if (!MAPBOX_TOKEN) {
     return (
@@ -55,8 +96,7 @@ function App() {
       {/* Map */}
       <Map
         userLocation={userLocation}
-        businesses={businesses}
-        businessesGeoJSON={businessesGeoJSON}
+        businesses={filteredBusinesses}
         selectedBusiness={selectedBusiness}
         onBusinessSelect={setSelectedBusiness}
         mapboxToken={MAPBOX_TOKEN}
@@ -66,6 +106,9 @@ function App() {
       <BottomSheet>
         <BusinessList
           businesses={businesses}
+          filteredBusinesses={filteredBusinesses}
+          searchQuery={searchQuery}
+          onSearchQueryChange={setSearchQuery}
           selectedBusiness={selectedBusiness}
           onBusinessSelect={setSelectedBusiness}
           selectedCategory={selectedCategory}
@@ -110,4 +153,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

@@ -1,60 +1,31 @@
-import { useMemo, useEffect, useRef, useState } from 'react'
-import BusinessCard from './BusinessCard'
-import CategoryFilter from './CategoryFilter'
+import { useEffect, useRef } from "react";
+import BusinessCard from "./BusinessCard";
+import CategoryFilter from "./CategoryFilter";
 
 export default function BusinessList({
   businesses,
+  filteredBusinesses,
+  searchQuery,
+  onSearchQueryChange,
   selectedBusiness,
   onBusinessSelect,
   selectedCategory,
   onCategoryChange,
   loading,
   error,
-  onShowInfo
+  onShowInfo,
 }) {
-  const cardRefs = useRef({})
-  const [searchQuery, setSearchQuery] = useState('')
-
-  // Filter businesses by category, distance, and search query
-  const filteredBusinesses = useMemo(() => {
-    let filtered = businesses
-
-    // Filter by distance (within 10 miles, or selected business)
-    filtered = filtered.filter(b => {
-      // Always include selected business
-      if (selectedBusiness && b.id === selectedBusiness.id) return true
-      // Include if within 10 miles (or no distance calculated yet)
-      return b.distance === null || b.distance <= 10
-    })
-
-    // Filter by category if selected
-    if (selectedCategory) {
-      filtered = filtered.filter(b => b.category?.id === selectedCategory)
-    }
-
-    // Filter by search query (case-insensitive, matches name, address, category, discount)
-    if (searchQuery.trim()) {
-      const q = searchQuery.trim().toLowerCase()
-      filtered = filtered.filter(b =>
-        b.name?.toLowerCase().includes(q) ||
-        b.address?.toLowerCase().includes(q) ||
-        b.category?.name?.toLowerCase().includes(q) ||
-        b.discount?.toLowerCase().includes(q)
-      )
-    }
-
-    return filtered
-  }, [businesses, selectedCategory, selectedBusiness, searchQuery])
+  const cardRefs = useRef({});
 
   // Scroll to selected business when it changes
   useEffect(() => {
     if (selectedBusiness && cardRefs.current[selectedBusiness.id]) {
       cardRefs.current[selectedBusiness.id].scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      })
+        behavior: "smooth",
+        block: "center",
+      });
     }
-  }, [selectedBusiness])
+  }, [selectedBusiness]);
 
   if (loading) {
     return (
@@ -62,16 +33,18 @@ export default function BusinessList({
         <div className="w-10 h-10 border-4 border-surface-700 border-t-primary-500 rounded-full animate-spin" />
         <p className="mt-4 text-sm text-gray-400">Loading businesses...</p>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-primary-500 font-medium">Failed to load businesses</p>
+        <p className="text-primary-500 font-medium">
+          Failed to load businesses
+        </p>
         <p className="text-sm text-gray-400 mt-2">{error}</p>
       </div>
-    )
+    );
   }
 
   if (businesses.length === 0) {
@@ -79,7 +52,7 @@ export default function BusinessList({
       <div className="text-center py-12">
         <p className="text-gray-400">No businesses found</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -103,13 +76,13 @@ export default function BusinessList({
         <input
           type="search"
           value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
+          onChange={(e) => onSearchQueryChange(e.target.value)}
           placeholder="Search businesses..."
           className="w-full bg-surface-800 border border-surface-600 rounded-xl px-4 py-2 pr-9 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 transition-colors"
         />
         {searchQuery && (
           <button
-            onClick={() => setSearchQuery('')}
+            onClick={() => onSearchQueryChange("")}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
             aria-label="Clear search"
           >
@@ -125,10 +98,10 @@ export default function BusinessList({
       />
 
       <div>
-        {filteredBusinesses.map(business => (
+        {filteredBusinesses.map((business) => (
           <div
             key={business.id}
-            ref={el => cardRefs.current[business.id] = el}
+            ref={(el) => (cardRefs.current[business.id] = el)}
           >
             <BusinessCard
               business={business}
@@ -143,11 +116,11 @@ export default function BusinessList({
             <p className="text-gray-400">
               {searchQuery.trim()
                 ? `No businesses match "${searchQuery.trim()}"`
-                : 'No businesses in this category'}
+                : "No businesses in this category"}
             </p>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

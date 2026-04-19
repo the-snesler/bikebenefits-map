@@ -30,7 +30,6 @@ function useMapImage({ mapRef, url, name }) {
 export default function Map({
   userLocation,
   businesses,
-  businessesGeoJSON,
   selectedBusiness,
   onBusinessSelect,
   mapboxToken,
@@ -39,21 +38,37 @@ export default function Map({
   const [route, setRoute] = useState(null);
   const hasZoomedToUser = useRef(false);
 
-  // Update GeoJSON to mark selected business
+  // Build visible marker data and mark selected business.
   const updatedGeoJSON = useMemo(() => {
-    if (!businessesGeoJSON) return businessesGeoJSON;
+    if (!businesses?.length) {
+      return {
+        type: "FeatureCollection",
+        features: [],
+      };
+    }
 
     return {
-      ...businessesGeoJSON,
-      features: businessesGeoJSON.features.map((feature) => ({
-        ...feature,
-        properties: {
-          ...feature.properties,
-          isSelected: selectedBusiness?.id === feature.properties.id,
-        },
-      })),
+      type: "FeatureCollection",
+      features: businesses
+        .filter((business) => business.latitude && business.longitude)
+        .map((business) => ({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [
+              parseFloat(business.longitude),
+              parseFloat(business.latitude),
+            ],
+          },
+          properties: {
+            id: business.id,
+            name: business.name,
+            distance: business.distance,
+            isSelected: selectedBusiness?.id === business.id,
+          },
+        })),
     };
-  }, [businessesGeoJSON, selectedBusiness]);
+  }, [businesses, selectedBusiness]);
   useMapImage({ mapRef, url: "/bike-icon.png", name: "bike-icon" });
 
   // Zoom to user location when available
@@ -87,7 +102,7 @@ export default function Map({
         const end = `${selectedBusiness.longitude},${selectedBusiness.latitude}`;
 
         const response = await fetch(
-          `https://api.mapbox.com/directions/v5/mapbox/cycling/${start};${end}?geometries=geojson&access_token=${mapboxToken}`
+          `https://api.mapbox.com/directions/v5/mapbox/cycling/${start};${end}?geometries=geojson&access_token=${mapboxToken}`,
         );
 
         if (!response.ok) throw new Error("Failed to fetch route");
@@ -139,11 +154,11 @@ export default function Map({
         onBusinessSelect(business);
         flyToLocation(
           parseFloat(business.latitude),
-          parseFloat(business.longitude)
+          parseFloat(business.longitude),
         );
       }
     },
-    [businesses, onBusinessSelect, flyToLocation]
+    [businesses, onBusinessSelect, flyToLocation],
   );
 
   // Route line style
