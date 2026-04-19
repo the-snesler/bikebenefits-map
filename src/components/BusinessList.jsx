@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useRef } from 'react'
+import { useMemo, useEffect, useRef, useState } from 'react'
 import BusinessCard from './BusinessCard'
 import CategoryFilter from './CategoryFilter'
 
@@ -13,8 +13,9 @@ export default function BusinessList({
   onShowInfo
 }) {
   const cardRefs = useRef({})
+  const [searchQuery, setSearchQuery] = useState('')
 
-  // Filter businesses by category and distance
+  // Filter businesses by category, distance, and search query
   const filteredBusinesses = useMemo(() => {
     let filtered = businesses
 
@@ -31,8 +32,19 @@ export default function BusinessList({
       filtered = filtered.filter(b => b.category?.id === selectedCategory)
     }
 
+    // Filter by search query (case-insensitive, matches name, address, category, discount)
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase()
+      filtered = filtered.filter(b =>
+        b.name?.toLowerCase().includes(q) ||
+        b.address?.toLowerCase().includes(q) ||
+        b.category?.name?.toLowerCase().includes(q) ||
+        b.discount?.toLowerCase().includes(q)
+      )
+    }
+
     return filtered
-  }, [businesses, selectedCategory, selectedBusiness])
+  }, [businesses, selectedCategory, selectedBusiness, searchQuery])
 
   // Scroll to selected business when it changes
   useEffect(() => {
@@ -87,6 +99,25 @@ export default function BusinessList({
         </button>
       </div>
 
+      <div className="relative mb-3">
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search businesses..."
+          className="w-full bg-surface-800 border border-surface-600 rounded-xl px-4 py-2 pr-9 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 transition-colors"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery('')}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+            aria-label="Clear search"
+          >
+            ✕
+          </button>
+        )}
+      </div>
+
       <CategoryFilter
         businesses={businesses}
         selectedCategory={selectedCategory}
@@ -109,7 +140,11 @@ export default function BusinessList({
 
         {filteredBusinesses.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-gray-400">No businesses in this category</p>
+            <p className="text-gray-400">
+              {searchQuery.trim()
+                ? `No businesses match "${searchQuery.trim()}"`
+                : 'No businesses in this category'}
+            </p>
           </div>
         )}
       </div>
