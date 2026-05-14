@@ -4,23 +4,65 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
+    <!-- Primary SEO -->
+    <title>Bike Benefits Map – Find Bicycle-Friendly Businesses & Cyclist Discounts</title>
+    <meta name="description" content="An interactive Bike Benefits map for finding bicycle-friendly businesses near you. Browse cyclist discounts, get bike routing directions, and discover restaurants and shops that reward riders." />
+    <link rel="canonical" href="https://bb.samnesler.com/" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Bike Benefits Map – Find Bicycle-Friendly Businesses" />
+    <meta property="og:description" content="Interactive map of bicycle-friendly businesses offering discounts to cyclists. Get bike directions and discover shops, cafes, and restaurants that reward riders." />
+    <meta property="og:url" content="https://bb.samnesler.com/" />
+    <meta property="og:site_name" content="Bike Benefits Map" />
+    <meta property="og:image" content="https://bb.samnesler.com/apple-touch-icon.png" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Bike Benefits Map – Find Bicycle-Friendly Businesses" />
+    <meta name="twitter:description" content="Interactive map of bicycle-friendly businesses offering discounts to cyclists." />
+    <meta name="twitter:image" content="https://bb.samnesler.com/apple-touch-icon.png" />
+
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#c5050c" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Bike Benefits" />
 
-    <!-- App Info -->
-    <meta name="description" content="Find bicycle-friendly businesses with discounts" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <!-- Manifest -->
     <link rel="manifest" href="/manifest.json" />
 
-    <title>Bicycle Benefits</title>
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Bike Benefits Map",
+        "url": "https://bb.samnesler.com/",
+        "description": "Interactive map of bicycle-friendly businesses offering discounts to cyclists, with live location, bike routing, and category filtering.",
+        "applicationCategory": "TravelApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript and a modern browser.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <h1>Bike Benefits Map</h1>
+      <p>
+        Bike Benefits Map is an interactive map for finding bicycle-friendly
+        businesses that offer discounts and perks to cyclists. Use it to
+        discover restaurants, cafes, and shops near you, see your live
+        location, and get bike routing directions to each spot.
+      </p>
+      <p>Please enable JavaScript to use the map.</p>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
