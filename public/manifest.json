@@ -1,7 +1,7 @@
 {
   "name": "Bicycle Benefits",
   "short_name": "Bike Benefits",
-  "description": "Find bicycle-friendly businesses with discounts",
+  "description": "Bike Benefits Map – find bicycle-friendly businesses offering discounts to cyclists, with live location and bike routing.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",
