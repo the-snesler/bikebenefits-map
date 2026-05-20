@@ -14,19 +14,6 @@ const MADISON_CENTER = {
   longitude: -89.383761,
 };
 
-function useMapImage({ mapRef, url, name }) {
-  useEffect(() => {
-    if (mapRef.current) {
-      const map = mapRef.current.getMap();
-
-      map.loadImage(url, (error, image) => {
-        if (error) throw error;
-        if (!map.hasImage(name)) map.addImage(name, image);
-      });
-    }
-  }, [mapRef.current]);
-}
-
 export default function Map({
   userLocation,
   businesses,
@@ -69,7 +56,17 @@ export default function Map({
         })),
     };
   }, [businesses, selectedBusiness]);
-  useMapImage({ mapRef, url: "/bike-icon.png", name: "bike-icon" });
+
+  const handleMapLoad = useCallback((event) => {
+    const map = event.target;
+    map.loadImage("/bike-icon.png", (error, image) => {
+      if (error) {
+        console.error("Error loading bike icon:", error);
+        return;
+      }
+      if (!map.hasImage("bike-icon")) map.addImage("bike-icon", image);
+    });
+  }, []);
 
   // Zoom to user location when available
   useEffect(() => {
@@ -198,6 +195,7 @@ export default function Map({
       mapStyle="mapbox://styles/mapbox/dark-v11"
       interactiveLayerIds={["businesses"]}
       onClick={handleMapClick}
+      onLoad={handleMapLoad}
     >
       <NavigationControl position="top-right" />
 
